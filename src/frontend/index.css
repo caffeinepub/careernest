@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 1rem;
+    
+    /* Sage green primary - calming, growth-oriented */
+    --primary: 0.62 0.08 155;
+    --primary-foreground: 0.98 0.01 155;
+    
+    /* Warm terracotta accent - encouraging, energetic */
+    --accent: 0.65 0.14 35;
+    --accent-foreground: 0.98 0.01 35;
+    
+    /* Soft sky blue secondary - wellness, calm */
+    --secondary: 0.75 0.09 230;
+    --secondary-foreground: 0.25 0.05 230;
+    
+    /* Warm cream/sand backgrounds */
+    --background: 0.97 0.015 75;
+    --foreground: 0.25 0.02 75;
+    
+    /* Cards with subtle warmth */
+    --card: 0.99 0.01 75;
+    --card-foreground: 0.25 0.02 75;
+    
+    --popover: 0.99 0.01 75;
+    --popover-foreground: 0.25 0.02 75;
+    
+    /* Muted earth tones */
+    --muted: 0.88 0.02 75;
+    --muted-foreground: 0.50 0.03 75;
+    
+    /* Borders with organic softness */
+    --border: 0.85 0.02 75;
+    --input: 0.85 0.02 75;
+    --ring: 0.62 0.08 155;
+    
+    /* Destructive - soft coral warning */
+    --destructive: 0.60 0.18 25;
+    --destructive-foreground: 0.98 0.01 25;
+    
+    /* Success - natural green */
+    --success: 0.65 0.12 145;
+    --success-foreground: 0.98 0.01 145;
+    
+    /* Chart colors - natural, harmonious palette */
+    --chart-1: 0.62 0.08 155;
+    --chart-2: 0.65 0.14 35;
+    --chart-3: 0.75 0.09 230;
+    --chart-4: 0.70 0.12 280;
+    --chart-5: 0.68 0.10 60;
+    
+    --sidebar: 0.96 0.015 75;
+    --sidebar-foreground: 0.25 0.02 75;
+    --sidebar-primary: 0.62 0.08 155;
+    --sidebar-primary-foreground: 0.98 0.01 155;
+    --sidebar-accent: 0.88 0.02 75;
+    --sidebar-accent-foreground: 0.25 0.02 75;
+    --sidebar-border: 0.85 0.02 75;
+    --sidebar-ring: 0.62 0.08 155;
+  }
+
+  .dark {
+    /* Deep forest/night backgrounds */
+    --background: 0.20 0.03 155;
+    --foreground: 0.95 0.02 155;
+    
+    /* Cards with depth */
+    --card: 0.25 0.04 155;
+    --card-foreground: 0.95 0.02 155;
+    
+    --popover: 0.23 0.04 155;
+    --popover-foreground: 0.95 0.02 155;
+    
+    /* Brighter sage for dark mode */
+    --primary: 0.70 0.10 155;
+    --primary-foreground: 0.20 0.03 155;
+    
+    /* Warmer terracotta in dark */
+    --accent: 0.68 0.15 35;
+    --accent-foreground: 0.20 0.03 35;
+    
+    /* Lighter blue for dark mode */
+    --secondary: 0.65 0.11 230;
+    --secondary-foreground: 0.20 0.03 230;
+    
+    --muted: 0.35 0.04 155;
+    --muted-foreground: 0.70 0.03 155;
+    
+    --border: 0.35 0.04 155;
+    --input: 0.35 0.04 155;
+    --ring: 0.70 0.10 155;
+    
+    --destructive: 0.65 0.18 25;
+    --destructive-foreground: 0.95 0.01 25;
+    
+    --success: 0.68 0.12 145;
+    --success-foreground: 0.95 0.01 145;
+    
+    --chart-1: 0.70 0.10 155;
+    --chart-2: 0.68 0.15 35;
+    --chart-3: 0.72 0.11 230;
+    --chart-4: 0.75 0.13 280;
+    --chart-5: 0.70 0.11 60;
+    
+    --sidebar: 0.23 0.04 155;
+    --sidebar-foreground: 0.95 0.02 155;
+    --sidebar-primary: 0.70 0.10 155;
+    --sidebar-primary-foreground: 0.20 0.03 155;
+    --sidebar-accent: 0.35 0.04 155;
+    --sidebar-accent-foreground: 0.95 0.02 155;
+    --sidebar-border: 0.35 0.04 155;
+    --sidebar-ring: 0.70 0.10 155;
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  .bg-organic-gradient {
+    background: linear-gradient(135deg, 
+      oklch(var(--background)) 0%, 
+      oklch(0.95 0.025 155) 50%,
+      oklch(0.96 0.02 230) 100%
+    );
+  }
+  
+  .dark .bg-organic-gradient {
+    background: linear-gradient(135deg, 
+      oklch(var(--background)) 0%, 
+      oklch(0.22 0.04 155) 50%,
+      oklch(0.24 0.04 200) 100%
+    );
+  }
+}
