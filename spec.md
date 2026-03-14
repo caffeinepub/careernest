@@ -1,30 +1,31 @@
 # CareerNest
 
 ## Current State
-CareerNest is a Maharashtra-focused educational platform. Students have a `UserProfile` with `name`, `academicLevel` (highSchool/undergraduate/postgraduate), `interests`, and `goals`. A `ProfileSetupModal` is shown on first login. The backend stores this profile and provides notes, shared notes, admin notes, career guidance, and mini-games.
+- SplashPage (`/`) shows CareerNest logo only and auto-redirects to `/login` after 2 seconds — correct.
+- HomePage (dashboard, after login) has a large AI Notes Generator Hero Banner as the first prominent section, followed by quick stats and a personalized learning path.
+- AINotesGeneratorPage has fields for education level, stream, subject, and topic but does not filter subjects based on the student's class profile.
+- StudyNotesPage and SharedNotesPage exist but don't filter by the student's enrolled class/stream.
+- All features are already behind authentication.
 
 ## Requested Changes (Diff)
 
 ### Add
-- `classLevel` field to `UserProfile` (string): 10th, 11th, 12th, Diploma, Engineering, BSc, BCA, OtherUG
-- `stream` field to `UserProfile` (string): Science, Commerce, Arts (for 11th/12th)
-- `branch` field to `UserProfile` (string): Computer/Mechanical/Civil/Electrical/Electronics/OtherBranch (for Engineering/Diploma)
-- Conditional stream/branch selection in `ProfileSetupModal` based on chosen class
-- Personalized dashboard sections showing notes/guidance relevant to the student's class and stream
-- Edit capability for classLevel/stream/branch in `ProfilePage`
+- Smart filtering on AINotesGeneratorPage: prepopulate education level and stream from student profile; restrict subject suggestions to curriculum-relevant ones for the selected level.
+- Dashboard feature cards grid on HomePage showing: AI Notes Generator, Notes Library (Study Notes), Career Guidance, Upload Notes, Mini Games — cleanly displayed after welcome section.
+- Subject lists per education level for the AI Notes Generator (only valid Maharashtra syllabus subjects).
 
 ### Modify
-- `UserProfile` backend type: add `classLevel`, `stream`, `branch` as optional strings
-- `ProfileSetupModal`: replace generic academic level with specific class/stream/branch dropdowns
-- `ProfilePage`: show and allow editing of classLevel, stream, branch
-- `HomePage`: show personalized sections based on profile class/stream
+- Remove the AI Notes Generator Hero Banner section from HomePage — the hero banner linking to `/ai-notes` should be deleted.
+- HomePage welcome section retains the logo, welcome text, and personalized subtitle.
+- AINotesGeneratorPage: add subject dropdown populated based on selected education level/stream; block or warn if topic seems unrelated to education.
+- Quick stats cards remain on homepage.
 
 ### Remove
-- Nothing removed
+- The `<section data-ocid="home.ai_notes.section">` hero banner block from HomePage.tsx.
 
 ## Implementation Plan
-1. Regenerate Motoko backend with updated `UserProfile` including `classLevel`, `stream`, `branch` fields
-2. Update `backend.d.ts` with new UserProfile shape
-3. Rewrite `ProfileSetupModal` with class dropdown + conditional stream/branch dropdowns
-4. Update `ProfilePage` to display and edit class/stream/branch
-5. Update `HomePage` to show personalized dashboard sections based on profile data
+1. Remove the AI Notes Generator hero banner from `HomePage.tsx`.
+2. Add a clean "Features" grid section to `HomePage.tsx` with cards for: AI Notes Generator, Study Notes Library, Career Guidance, Upload Notes, Mini Games.
+3. In `AINotesGeneratorPage.tsx`, add a subject dropdown that is populated based on the selected education level + stream, using a curated Maharashtra syllabus subject map.
+4. Prepopulate education level and stream in AINotesGeneratorPage from the student's saved profile.
+5. Add validation that prevents generating notes for clearly off-topic inputs.

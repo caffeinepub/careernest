@@ -12,6 +12,7 @@ import {
   LogOut,
   Moon,
   Shield,
+  Sparkles,
   Sun,
   User,
   Users,
@@ -34,17 +35,17 @@ export default function Navigation() {
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/explore", label: "Explore", icon: Compass },
-    { path: "/assessment", label: "Assessment", icon: ClipboardList },
+    { path: "/ai-notes", label: "AI Notes", icon: Sparkles },
     { path: "/study-notes", label: "Study Notes", icon: BookOpen },
     { path: "/shared-notes", label: "Shared Notes", icon: Users },
     { path: "/games", label: "Games", icon: Gamepad2 },
+    { path: "/explore", label: "Explore", icon: Compass },
+    { path: "/assessment", label: "Assessment", icon: ClipboardList },
     { path: "/mood", label: "Mood", icon: Heart },
     { path: "/wellness", label: "Wellness", icon: Leaf },
     { path: "/profile", label: "Profile", icon: User },
   ];
 
-  // Add admin link if user is admin
   if (isAdmin) {
     navItems.push({ path: "/admin", label: "Admin", icon: Shield });
   }
@@ -71,12 +72,13 @@ export default function Navigation() {
           </Link>
 
           {/* Navigation Links */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 overflow-x-auto">
             {navItems.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
                 to={path}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                data-ocid={`nav.${label.toLowerCase().replace(/ /g, "_")}.link`}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   isActive(path)
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -87,7 +89,6 @@ export default function Navigation() {
               </Link>
             ))}
 
-            {/* Theme Toggle */}
             <Button
               variant="ghost"
               size="sm"
@@ -101,12 +102,12 @@ export default function Navigation() {
               )}
             </Button>
 
-            {/* Logout */}
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLogout}
               className="ml-2"
+              data-ocid="nav.logout.button"
             >
               <LogOut className="h-4 w-4" />
             </Button>

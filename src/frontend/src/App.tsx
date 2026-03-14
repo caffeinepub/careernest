@@ -12,6 +12,7 @@ import { ThemeProvider } from "next-themes";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useGetCallerUserProfile } from "./hooks/useQueries";
 
+import AINotesGeneratorPage from "./pages/AINotesGeneratorPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminSetupPage from "./pages/AdminSetupPage";
@@ -29,13 +30,11 @@ import MoodTrackerPage from "./pages/MoodTrackerPage";
 import ProfilePage from "./pages/ProfilePage";
 import ReactionTestPage from "./pages/ReactionTestPage";
 import SharedNotesPage from "./pages/SharedNotesPage";
-// Pages
 import SplashPage from "./pages/SplashPage";
 import StudyNotesPage from "./pages/StudyNotesPage";
 import WellnessPage from "./pages/WellnessPage";
 import WordQuizPage from "./pages/WordQuizPage";
 
-// Components
 import Navigation from "./components/Navigation";
 import ProfileSetupModal from "./components/ProfileSetupModal";
 
@@ -48,7 +47,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Root layout component
 function RootLayout() {
   const { identity, loginStatus } = useInternetIdentity();
   const {
@@ -63,7 +61,6 @@ function RootLayout() {
   const showProfileSetup =
     isAuthenticated && !profileLoading && isFetched && userProfile === null;
 
-  // Unauthenticated: splash page at /, login screen everywhere else
   if (!isAuthenticated && !isLoggingIn) {
     if (location.pathname === "/") {
       return <SplashPage />;
@@ -96,129 +93,112 @@ function RootLayout() {
   );
 }
 
-// Define routes
-const rootRoute = createRootRoute({
-  component: RootLayout,
-});
+const rootRoute = createRootRoute({ component: RootLayout });
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
   component: HomePage,
 });
-
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: LoginPage,
 });
-
 const assessmentRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/assessment",
   component: AssessmentPage,
 });
-
 const resultsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/results",
   component: CareerResultsPage,
 });
-
 const explorerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/explore",
   component: CareerExplorerPage,
 });
-
 const careerDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/career/$title",
   component: CareerDetailPage,
 });
-
 const moodRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/mood",
   component: MoodTrackerPage,
 });
-
 const wellnessRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/wellness",
   component: WellnessPage,
 });
-
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/profile",
   component: ProfilePage,
 });
-
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
   component: AdminDashboardPage,
 });
-
 const adminSetupRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin-setup",
   component: AdminSetupPage,
 });
-
 const studyNotesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/study-notes",
   component: StudyNotesPage,
 });
-
 const sharedNotesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/shared-notes",
   component: SharedNotesPage,
 });
-
 const gamesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/games",
   component: GamesPage,
 });
-
 const memoryGameRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/games/memory",
   component: MemoryGamePage,
 });
-
 const mathGameRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/games/math",
   component: MathPuzzlePage,
 });
-
 const reactionGameRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/games/reaction",
   component: ReactionTestPage,
 });
-
 const wordGameRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/games/word",
   component: WordQuizPage,
 });
-
 const careerGuidanceRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/career-guidance",
   component: CareerGuidancePage,
 });
-
 const adminLoginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin-login",
   component: AdminLoginPage,
+});
+const aiNotesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/ai-notes",
+  component: AINotesGeneratorPage,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -242,6 +222,7 @@ const routeTree = rootRoute.addChildren([
   wordGameRoute,
   careerGuidanceRoute,
   adminLoginRoute,
+  aiNotesRoute,
 ]);
 
 const router = createRouter({ routeTree });
