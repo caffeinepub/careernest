@@ -501,7 +501,8 @@ export function useAddAdminNote() {
       content: string;
     }) => {
       if (!actor) throw new Error("Actor not available");
-      return (actor as any).addAdminNote(
+      return (actor as any).addAdminNoteWithSecret(
+        "CAREERNEST2024ADMIN",
         params.title,
         params.educationLevel,
         params.board,
@@ -524,7 +525,7 @@ export function useDeleteAdminNote() {
   return useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("Actor not available");
-      await (actor as any).deleteAdminNote(id);
+      await (actor as any).deleteAdminNoteWithSecret("CAREERNEST2024ADMIN", id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminNotes"] });

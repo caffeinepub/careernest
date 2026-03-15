@@ -43,6 +43,8 @@ import WordQuizPage from "./pages/WordQuizPage";
 import Navigation from "./components/Navigation";
 import ProfileSetupModal from "./components/ProfileSetupModal";
 
+const ADMIN_SESSION_KEY = "careernest_admin_session";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -66,11 +68,50 @@ function RootLayout() {
   const showProfileSetup =
     isAuthenticated && !profileLoading && isFetched && userProfile === null;
 
-  if (!isAuthenticated && !isLoggingIn) {
+  // Admin pages are always accessible (use their own local session auth)
+  const isAdminRoute =
+    location.pathname === "/admin-login" ||
+    location.pathname === "/admin" ||
+    location.pathname === "/admin-setup";
+
+  // Check if user has local admin session
+  const hasLocalAdminSession =
+    localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+
+  if (!isAuthenticated && !isLoggingIn && !isAdminRoute) {
     if (location.pathname === "/") {
       return <SplashPage />;
     }
     return <LoginPage />;
+  }
+
+  // For admin routes: show admin pages directly (no Navigation wrapper)
+  if (isAdminRoute) {
+    // Admin login page - always show
+    if (location.pathname === "/admin-login") {
+      return (
+        <>
+          <Outlet />
+          <Toaster />
+        </>
+      );
+    }
+    // Admin dashboard / setup - show if local session exists
+    if (hasLocalAdminSession) {
+      return (
+        <div className="min-h-screen bg-organic-gradient">
+          <Outlet />
+          <Toaster />
+        </div>
+      );
+    }
+    // No local session → redirect handled by AdminDashboardPage itself
+    return (
+      <>
+        <Outlet />
+        <Toaster />
+      </>
+    );
   }
 
   return (
@@ -230,7 +271,6 @@ const routes = [
 ];
 
 const routeTree = rootRoute.addChildren(routes);
-
 const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {

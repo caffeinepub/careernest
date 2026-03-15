@@ -35,6 +35,7 @@ import {
   CheckCircle,
   FileText,
   Loader2,
+  LogOut,
   Minus,
   Plus,
   Shield,
@@ -58,11 +59,12 @@ import {
   useGetAllUsers,
   useGetBlockedUsers,
   useGetPendingSharedNotes,
-  useIsCallerAdmin,
   useRejectSharedNote,
   useUnblockUser,
 } from "../hooks/useQueries";
-import { EDUCATION_LEVELS, MAHARASHTRA_BOARDS } from "../lib/maharashtra";
+import { EDUCATION_LEVELS } from "../lib/maharashtra";
+
+const ADMIN_SESSION_KEY = "careernest_admin_session";
 
 function TruncatedPrincipal({ p }: { p: Principal }) {
   const s = p.toString();
@@ -140,7 +142,6 @@ function ContentManagementTab() {
 
   return (
     <div className="space-y-8">
-      {/* Upload Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -242,7 +243,6 @@ function ContentManagementTab() {
         </CardContent>
       </Card>
 
-      {/* Content List */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -376,7 +376,6 @@ function AssessmentManagementTab() {
   const addQuestion = () => {
     if (questions.length < 15) setQuestions((p) => [...p, emptyQuestion()]);
   };
-
   const removeQuestion = (idx: number) => {
     if (questions.length > 1)
       setQuestions((p) => p.filter((_, i) => i !== idx));
@@ -404,9 +403,7 @@ function AssessmentManagementTab() {
     }
     const payload = { title, subject, educationLevel, questions };
     try {
-      if (editingId !== null) {
-        await deleteNote.mutateAsync(editingId);
-      }
+      if (editingId !== null) await deleteNote.mutateAsync(editingId);
       await addNote.mutateAsync({
         title,
         educationLevel,
@@ -438,7 +435,6 @@ function AssessmentManagementTab() {
 
   return (
     <div className="space-y-8">
-      {/* Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -447,7 +443,6 @@ function AssessmentManagementTab() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Basic Info */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <Label>Assessment Title *</Label>
@@ -484,7 +479,6 @@ function AssessmentManagementTab() {
             </div>
           </div>
 
-          {/* Questions */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-foreground">
@@ -500,10 +494,9 @@ function AssessmentManagementTab() {
                 <Plus className="h-4 w-4 mr-1" /> Add Question
               </Button>
             </div>
-
             {questions.map((q, qIdx) => (
               <Card
-                // biome-ignore lint/suspicious/noArrayIndexKey: questions are positional form fields
+                // biome-ignore lint/suspicious/noArrayIndexKey: questions are positional
                 key={qIdx}
                 className="border-border"
                 data-ocid={`admin.assessment.item.${qIdx + 1}`}
@@ -613,7 +606,6 @@ function AssessmentManagementTab() {
         </CardContent>
       </Card>
 
-      {/* Saved Assessments */}
       <Card>
         <CardHeader>
           <CardTitle>Saved Assessments ({assessments.length})</CardTitle>
@@ -699,7 +691,6 @@ function StudentNotesTab() {
   const approveNote = useApproveSharedNote();
   const rejectNote = useRejectSharedNote();
   const deleteNote = useDeleteSharedNote();
-
   const [subtab, setSubtab] = useState<"pending" | "all">("pending");
 
   return (
@@ -861,7 +852,6 @@ function UsersTab() {
   const blockedSet = new Set(
     (blockedUsers || []).map((p: Principal) => p.toString()),
   );
-
   const filteredUsers = (allUsers || []).filter(
     ([p, prof]: [Principal, any]) => {
       const q = userSearch.toLowerCase();
@@ -885,7 +875,6 @@ function UsersTab() {
           data-ocid="admin.users.search_input"
         />
       </div>
-
       {usersLoading ? (
         <div className="space-y-2" data-ocid="admin.users.loading_state">
           {[1, 2, 3].map((i) => (
@@ -975,36 +964,41 @@ function UsersTab() {
 // ─────────────────────────────────────────────
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
-  const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
 
-  if (!adminLoading && !isAdmin) {
-    navigate({ to: "/" });
+  // Check local admin session (simple username/password login)
+  const hasLocalAdminSession =
+    localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+
+  if (!hasLocalAdminSession) {
+    navigate({ to: "/admin-login" });
     return null;
   }
 
-  if (adminLoading) {
-    return (
-      <div
-        className="container mx-auto px-4 py-8 space-y-6"
-        data-ocid="admin.loading_state"
-      >
-        <Skeleton className="h-12 w-64" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-64" />
-      </div>
-    );
-  }
+  const handleLogout = () => {
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+    navigate({ to: "/admin-login" });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-foreground mb-2 flex items-center gap-2">
-          <Shield className="h-8 w-8 text-primary" />
-          Admin Dashboard
-        </h1>
-        <p className="text-muted-foreground">
-          Manage content, assessments, and students.
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-serif font-bold text-foreground mb-2 flex items-center gap-2">
+            <Shield className="h-8 w-8 text-primary" />
+            Admin Dashboard
+          </h1>
+          <p className="text-muted-foreground">
+            Manage content, assessments, and students.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleLogout}
+          data-ocid="admin.logout.button"
+        >
+          <LogOut className="h-4 w-4 mr-1" /> Logout
+        </Button>
       </div>
 
       <Tabs defaultValue="content">
@@ -1029,15 +1023,12 @@ export default function AdminDashboardPage() {
         <TabsContent value="content">
           <ContentManagementTab />
         </TabsContent>
-
         <TabsContent value="assessments">
           <AssessmentManagementTab />
         </TabsContent>
-
         <TabsContent value="student-notes">
           <StudentNotesTab />
         </TabsContent>
-
         <TabsContent value="users">
           <UsersTab />
         </TabsContent>

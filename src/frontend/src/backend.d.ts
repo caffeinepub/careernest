@@ -135,8 +135,10 @@ export interface backendInterface {
     getReportedSharedNotes(): Promise<Array<SharedNote>>;
     // Admin Notes
     addAdminNote(title: string, educationLevel: string, board: string, subject: string, topic: string, content: string): Promise<bigint>;
+    addAdminNoteWithSecret(secret: string, title: string, educationLevel: string, board: string, subject: string, topic: string, content: string): Promise<bigint>;
     getAllAdminNotes(): Promise<Array<AdminNote>>;
     deleteAdminNote(id: bigint): Promise<void>;
+    deleteAdminNoteWithSecret(secret: string, id: bigint): Promise<void>;
     toggleFeaturedAdminNote(id: bigint): Promise<void>;
     // User Blocking
     blockUser(user: Principal): Promise<void>;

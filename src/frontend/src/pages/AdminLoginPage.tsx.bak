@@ -1,0 +1,187 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useNavigate } from "@tanstack/react-router";
+import { CheckCircle2, Loader2, Lock, LogIn, Shield } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useAssignAdminRole, useIsCallerAdmin } from "../hooks/useQueries";
+
+const ADMIN_SECRET = "CAREERNEST2024ADMIN";
+
+export default function AdminLoginPage() {
+  const navigate = useNavigate();
+  const [code, setCode] = useState("");
+  const [codeVerified, setCodeVerified] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const { identity, login, isLoggingIn, isInitializing } =
+    useInternetIdentity();
+  const assignAdminRole = useAssignAdminRole();
+  const { data: isAlreadyAdmin } = useIsCallerAdmin();
+
+  const isLoggedIn = !!identity && !identity.getPrincipal().isAnonymous();
+  const isPending = assignAdminRole.isPending;
+
+  const handleGrantAccess = useCallback(async () => {
+    try {
+      await assignAdminRole.mutateAsync();
+      setIsSuccess(true);
+      toast.success("Admin access granted! Opening admin dashboard...");
+      setTimeout(() => {
+        navigate({ to: "/admin" });
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to grant admin access:", error);
+      toast.error("Failed to grant admin access. Please try again.");
+    }
+  }, [assignAdminRole, navigate]);
+
+  // If already admin, go straight to admin dashboard
+  useEffect(() => {
+    if (isAlreadyAdmin) {
+      navigate({ to: "/admin" });
+    }
+  }, [isAlreadyAdmin, navigate]);
+
+  // Once logged in after code verified, auto-grant admin access
+  useEffect(() => {
+    if (
+      codeVerified &&
+      isLoggedIn &&
+      !isAlreadyAdmin &&
+      !isPending &&
+      !isSuccess
+    ) {
+      handleGrantAccess();
+    }
+  }, [
+    codeVerified,
+    isLoggedIn,
+    isAlreadyAdmin,
+    isPending,
+    isSuccess,
+    handleGrantAccess,
+  ]);
+
+  const handleVerifyCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsVerifying(true);
+    setTimeout(() => {
+      if (code === ADMIN_SECRET) {
+        setCodeVerified(true);
+        toast.success("Code verified! Please log in to continue.");
+      } else {
+        toast.error("Invalid access code. Please try again.");
+      }
+      setIsVerifying(false);
+    }, 400);
+  };
+
+  return (
+    <div className="min-h-screen bg-organic-gradient flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="text-center">
+          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <Lock className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="text-2xl font-serif">Admin Access</CardTitle>
+          <CardDescription>
+            {!codeVerified
+              ? "Enter the administrator access code to continue"
+              : !isLoggedIn
+                ? "Now log in to activate your admin access"
+                : "Granting admin access..."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isSuccess ? (
+            <div className="text-center py-6 space-y-3">
+              <div className="mx-auto w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="h-7 w-7 text-green-600" />
+              </div>
+              <p className="font-semibold text-foreground">
+                Admin Access Granted!
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Redirecting to admin dashboard...
+              </p>
+            </div>
+          ) : !codeVerified ? (
+            <form onSubmit={handleVerifyCode} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-code">Access Code</Label>
+                <Input
+                  id="admin-code"
+                  type="password"
+                  placeholder="Enter admin access code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  data-ocid="admin.input"
+                  autoComplete="off"
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isVerifying || !code}
+                data-ocid="admin.submit_button"
+              >
+                {isVerifying ? "Verifying..." : "Verify Code"}
+              </Button>
+            </form>
+          ) : !isLoggedIn ? (
+            <div className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-800 text-sm">
+                Code verified! Log in below to open the admin portal directly.
+              </div>
+              <Button
+                onClick={login}
+                disabled={isLoggingIn || isInitializing}
+                className="w-full h-11 text-base font-semibold"
+                data-ocid="admin.login_button"
+              >
+                {isLoggingIn ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging
+                    in...
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" /> Log In with Internet
+                    Identity
+                  </>
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-4 space-y-3">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+              <p className="text-sm text-muted-foreground">
+                Setting up admin access...
+              </p>
+              <Button
+                onClick={handleGrantAccess}
+                disabled={isPending}
+                className="w-full"
+                data-ocid="admin.grant_button"
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                {isPending ? "Granting..." : "Grant Admin Access"}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -542,44 +542,11 @@ actor {
     adminNoteCounter;
   };
 
-  public query func getAllAdminNotes() : async [AdminNote] {
+  public query ({ caller }) func getAllAdminNotes() : async [AdminNote] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized");
+    };
     adminNotes.toArray();
-  };
-
-  public shared func addAdminNoteWithSecret(
-    secret : Text,
-    title : Text,
-    educationLevel : Text,
-    board : Text,
-    subject : Text,
-    topic : Text,
-    content : Text
-  ) : async Nat {
-    if (secret != APP_ADMIN_SECRET) {
-      Runtime.trap("Unauthorized: Invalid admin secret");
-    };
-    adminNoteCounter += 1;
-    let note : AdminNote = {
-      id = adminNoteCounter;
-      title;
-      educationLevel;
-      board;
-      subject;
-      topic;
-      content;
-      timestamp = Time.now();
-      isVerified = true;
-      isFeatured = false;
-    };
-    adminNotes.add(note);
-    adminNoteCounter;
-  };
-
-  public shared func deleteAdminNoteWithSecret(secret : Text, id : Nat) : async () {
-    if (secret != APP_ADMIN_SECRET) {
-      Runtime.trap("Unauthorized: Invalid admin secret");
-    };
-    adminNotes := adminNotes.filter(func(n) { n.id != id });
   };
 
   public shared ({ caller }) func deleteAdminNote(id : Nat) : async () {

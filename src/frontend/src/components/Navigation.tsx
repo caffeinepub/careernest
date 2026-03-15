@@ -27,7 +27,17 @@ export default function Navigation() {
   const { clear } = useInternetIdentity();
   const queryClient = useQueryClient();
   const { data: isAdmin } = useIsCallerAdmin();
-  const [logoError, setLogoError] = useState(false);
+  const [logoSrcIndex, setLogoSrcIndex] = useState(0);
+  const logoSrcs = [
+    "/assets/uploads/file_00000000afac7208abab2d62179b0676-1-1-1.png",
+    "/assets/uploads/file_00000000afac7208abab2d62179b0676-1--1.png",
+    "/assets/uploads/file_00000000afac7208abab2d62179b0676-1--2.png",
+    "/assets/generated/careernest-logo.dim_400x400-transparent.png",
+  ];
+  const handleLogoError = () => {
+    if (logoSrcIndex + 1 < logoSrcs.length - 1) setLogoSrcIndex((i) => i + 1);
+    else setLogoSrcIndex(logoSrcs.length - 1);
+  };
 
   const handleLogout = async () => {
     await clear();
@@ -68,20 +78,12 @@ export default function Navigation() {
             className="flex items-center gap-2 group shrink-0"
             data-ocid="nav.home.link"
           >
-            {!logoError ? (
-              <img
-                src="/assets/uploads/file_00000000afac7208abab2d62179b0676-1-1-1.png"
-                alt="CareerNest"
-                className="h-8 w-auto object-contain"
-                onError={() => setLogoError(true)}
-              />
-            ) : (
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-serif font-bold text-sm">
-                  CN
-                </span>
-              </div>
-            )}
+            <img
+              src={logoSrcs[logoSrcIndex]}
+              alt="CareerNest"
+              className="h-10 w-auto object-contain"
+              onError={handleLogoError}
+            />
             <span className="font-serif text-xl font-semibold hidden sm:block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               CareerNest
             </span>
