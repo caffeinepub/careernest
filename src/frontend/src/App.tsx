@@ -9,6 +9,7 @@ import {
   useLocation,
 } from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useGetCallerUserProfile } from "./hooks/useQueries";
 
@@ -28,10 +29,14 @@ import MathPuzzlePage from "./pages/MathPuzzlePage";
 import MemoryGamePage from "./pages/MemoryGamePage";
 import MoodTrackerPage from "./pages/MoodTrackerPage";
 import ProfilePage from "./pages/ProfilePage";
+import QuestionPapersPage from "./pages/QuestionPapersPage";
+import QuizPage from "./pages/QuizPage";
 import ReactionTestPage from "./pages/ReactionTestPage";
 import SharedNotesPage from "./pages/SharedNotesPage";
 import SplashPage from "./pages/SplashPage";
 import StudyNotesPage from "./pages/StudyNotesPage";
+import StudyPlannerPage from "./pages/StudyPlannerPage";
+import TextbooksPage from "./pages/TextbooksPage";
 import WellnessPage from "./pages/WellnessPage";
 import WordQuizPage from "./pages/WordQuizPage";
 
@@ -76,7 +81,8 @@ function RootLayout() {
       </main>
       <footer className="border-t border-border bg-card/50 backdrop-blur-sm py-8 mt-16">
         <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
-          &copy; {new Date().getFullYear()}. Built with &hearts; using{" "}
+          &copy; {new Date().getFullYear()} CareerNest — Maharashtra Students
+          Platform. Built with &hearts; using{" "}
           <a
             href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
             target="_blank"
@@ -95,135 +101,135 @@ function RootLayout() {
 
 const rootRoute = createRootRoute({ component: RootLayout });
 
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/",
-  component: HomePage,
-});
-const loginRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/login",
-  component: LoginPage,
-});
-const assessmentRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/assessment",
-  component: AssessmentPage,
-});
-const resultsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/results",
-  component: CareerResultsPage,
-});
-const explorerRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/explore",
-  component: CareerExplorerPage,
-});
-const careerDetailRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/career/$title",
-  component: CareerDetailPage,
-});
-const moodRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/mood",
-  component: MoodTrackerPage,
-});
-const wellnessRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/wellness",
-  component: WellnessPage,
-});
-const profileRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/profile",
-  component: ProfilePage,
-});
-const adminRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/admin",
-  component: AdminDashboardPage,
-});
-const adminSetupRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/admin-setup",
-  component: AdminSetupPage,
-});
-const studyNotesRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/study-notes",
-  component: StudyNotesPage,
-});
-const sharedNotesRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/shared-notes",
-  component: SharedNotesPage,
-});
-const gamesRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/games",
-  component: GamesPage,
-});
-const memoryGameRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/games/memory",
-  component: MemoryGamePage,
-});
-const mathGameRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/games/math",
-  component: MathPuzzlePage,
-});
-const reactionGameRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/games/reaction",
-  component: ReactionTestPage,
-});
-const wordGameRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/games/word",
-  component: WordQuizPage,
-});
-const careerGuidanceRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/career-guidance",
-  component: CareerGuidancePage,
-});
-const adminLoginRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/admin-login",
-  component: AdminLoginPage,
-});
-const aiNotesRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/ai-notes",
-  component: AINotesGeneratorPage,
-});
+const routes = [
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/",
+    component: HomePage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/login",
+    component: LoginPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/assessment",
+    component: AssessmentPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/results",
+    component: CareerResultsPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/explore",
+    component: CareerExplorerPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/career/$title",
+    component: CareerDetailPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/mood",
+    component: MoodTrackerPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/wellness",
+    component: WellnessPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/profile",
+    component: ProfilePage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/admin",
+    component: AdminDashboardPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/admin-setup",
+    component: AdminSetupPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/study-notes",
+    component: StudyNotesPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/shared-notes",
+    component: SharedNotesPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/games",
+    component: GamesPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/games/memory",
+    component: MemoryGamePage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/games/math",
+    component: MathPuzzlePage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/games/reaction",
+    component: ReactionTestPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/games/word",
+    component: WordQuizPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/career-guidance",
+    component: CareerGuidancePage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/admin-login",
+    component: AdminLoginPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/ai-notes",
+    component: AINotesGeneratorPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/textbooks",
+    component: TextbooksPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/quiz",
+    component: QuizPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/question-papers",
+    component: QuestionPapersPage,
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/study-planner",
+    component: StudyPlannerPage,
+  }),
+];
 
-const routeTree = rootRoute.addChildren([
-  indexRoute,
-  loginRoute,
-  assessmentRoute,
-  resultsRoute,
-  explorerRoute,
-  careerDetailRoute,
-  moodRoute,
-  wellnessRoute,
-  profileRoute,
-  adminRoute,
-  adminSetupRoute,
-  studyNotesRoute,
-  sharedNotesRoute,
-  gamesRoute,
-  memoryGameRoute,
-  mathGameRoute,
-  reactionGameRoute,
-  wordGameRoute,
-  careerGuidanceRoute,
-  adminLoginRoute,
-  aiNotesRoute,
-]);
+const routeTree = rootRoute.addChildren(routes);
 
 const router = createRouter({ routeTree });
 
@@ -237,7 +243,9 @@ export default function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <LanguageProvider>
+          <RouterProvider router={router} />
+        </LanguageProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

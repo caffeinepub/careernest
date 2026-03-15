@@ -1,59 +1,71 @@
 import { Button } from "@/components/ui/button";
-import { BookOpen, Gamepad2, Loader2, Shield, Users } from "lucide-react";
+import { BookOpen, Brain, FileText, Gamepad2, Loader2 } from "lucide-react";
+import { LanguageSwitcher, useLanguage } from "../contexts/LanguageContext";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
 export default function LoginPage() {
   const { login, loginStatus } = useInternetIdentity();
+  const { t } = useLanguage();
   const isLoggingIn = loginStatus === "logging-in";
 
   const features = [
     {
       icon: BookOpen,
-      label: "AI Study Notes",
-      desc: "Maharashtra syllabus-aligned notes for Class 1–12, Engineering, BSc, BCA & more",
+      label: "Study Notes & Textbooks",
+      desc: "Maharashtra State Board textbooks and study notes for Class 10, 11, 12 and beyond",
     },
     {
-      icon: Users,
-      label: "Shared Notes",
-      desc: "Upload & discover notes from students across Maharashtra",
+      icon: Brain,
+      label: "AI Study Assistant",
+      desc: "Get explanations, generate notes and practice questions for Maharashtra syllabus",
+    },
+    {
+      icon: FileText,
+      label: "Quiz & Question Papers",
+      desc: "Practice MCQ quizzes and previous years board exam papers",
     },
     {
       icon: Gamepad2,
-      label: "Stress Relief Games",
-      desc: "Fun mini-games to take a break and recharge",
-    },
-    {
-      icon: Shield,
-      label: "Career Guidance",
-      desc: "Assessments and career path exploration",
+      label: "Wellness & Games",
+      desc: "Career guidance, stress relief games, and wellness resources for students",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-organic-gradient flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="max-w-lg w-full">
-        <div className="text-center space-y-10">
+        <div className="text-center space-y-8">
+          {/* Language Switcher */}
+          <div className="flex justify-center">
+            <LanguageSwitcher />
+          </div>
+
           {/* Logo */}
           <div className="flex justify-center">
             <img
               src="/assets/uploads/file_00000000afac7208abab2d62179b0676-1-1-1.png"
               alt="CareerNest Logo"
-              className="w-56 h-auto object-contain"
+              className="w-56 h-auto object-contain drop-shadow-lg"
               onError={(e) => {
                 const el = e.currentTarget;
                 el.style.display = "none";
+                const fallback = el.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = "flex";
               }}
             />
+            <div className="hidden w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl items-center justify-center">
+              <span className="text-white font-serif font-bold text-4xl">
+                CN
+              </span>
+            </div>
           </div>
 
           {/* Title & Subtitle */}
-          <div className="space-y-3">
-            <h1 className="text-4xl font-serif font-bold text-foreground">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               CareerNest
             </h1>
-            <p className="text-muted-foreground text-lg">
-              Maharashtra's smart academic & career platform for students
-            </p>
+            <p className="text-muted-foreground text-base">{t.tagline}</p>
           </div>
 
           {/* Feature Highlights */}
@@ -61,7 +73,7 @@ export default function LoginPage() {
             {features.map(({ icon: Icon, label, desc }) => (
               <div
                 key={label}
-                className="bg-card/70 backdrop-blur-sm rounded-xl p-4 border border-border"
+                className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-border shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-1">
                   <Icon className="h-4 w-4 text-primary" />
@@ -78,7 +90,7 @@ export default function LoginPage() {
               size="lg"
               onClick={login}
               disabled={isLoggingIn}
-              className="w-full px-8 py-6 text-lg rounded-2xl shadow-glow hover:shadow-soft transition-all"
+              className="w-full px-8 py-6 text-lg rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg transition-all"
               data-ocid="login.primary_button"
             >
               {isLoggingIn ? (
@@ -87,7 +99,7 @@ export default function LoginPage() {
                   Connecting...
                 </>
               ) : (
-                "Login / Sign Up"
+                t.login
               )}
             </Button>
             <p className="text-xs text-muted-foreground">
